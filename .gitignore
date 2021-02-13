@@ -1,2 +1,5 @@
 # Dependency directories
 node_modules/
+
+# Will be included once finished
+.env
