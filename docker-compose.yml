@@ -1,0 +1,18 @@
+services:
+  db:
+    image: postgres
+    container_name: db
+    environment:
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_USER: postgres
+    ports:
+      - "35432:5432"
+  web:
+    build: .
+    container_name: twtr-api
+    env_file: 
+      - ./.env
+    depends_on:
+      - db
+    ports:
+      - "3000:3000"
