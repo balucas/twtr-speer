@@ -20,6 +20,7 @@ router.post("/register", async (req, res, next) => {
     res.status(400);
     res.send(err);
   } else {
+    // Creating user
     const newUser = db.user.build({
       username: username
     });
@@ -62,6 +63,7 @@ router.get("/login", async (req, res, next) => {
     res.send(err);
   } else {
     try{
+      // Querying user
       const user = await db.user.findOne({
         where:{
           username: username
@@ -76,16 +78,30 @@ router.get("/login", async (req, res, next) => {
         data = {
           "message": "Username not found"
         }
+        res.status(status);
+        res.send(data);
       } else {
-        //user.validatePassword(password);
-        status = 200;
-        data = {
-          "message": "Success",
-          "data": user
-        }
+        user.validatePassword(password)
+          .then(isValid => {
+            // Handle authentication
+            if (isValid) {
+              status = 200;
+              data = {
+                "message": "Success",
+                "data": user.id
+              };
+            } else {
+              status = 200;
+              data = {
+                "message": "Wrong password",
+                "data": user.id
+              };
+            }
+            
+            res.status(status);
+            res.send(data);
+          });
       }
-      res.status(status);
-      res.send(data);
     } catch(error) {
       const err = {
         "error": "db_error", 
