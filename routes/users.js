@@ -1,6 +1,8 @@
-var express = require('express');
-var router = express.Router();
+const express = require("express");
+const jwt = require("jsonwebtoken");
+const router = express.Router();
 const db = require("../db/models/database");
+const config = require("../config.js");
 
 /* GET users listing. */
 router.get('/', function(req, res, next) {
@@ -85,10 +87,14 @@ router.get("/login", async (req, res, next) => {
           .then(isValid => {
             // Handle authentication
             if (isValid) {
+              // Create jwt token
+              const token = jwt.sign({ username: username },
+                config.secret,
+                { expiresIn: "24h" });
               status = 200;
               data = {
                 "message": "Success",
-                "data": user.id
+                "token": token 
               };
             } else {
               status = 200;
